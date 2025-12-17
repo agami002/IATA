@@ -1,607 +1,1083 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ISAGO – Intuitive Flowcharts (by video chapter)</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tulip-Style ISAGO Digital Workflow (Interactive Demo)</title>
   <style>
     :root{
-      --bg:#0b1220; --card:#111a2e; --ink:#e7eefc; --muted:#a9b6d3;
-      --blue:#2f74ff; --cyan:#14b8ff; --green:#22c55e; --amber:#f59e0b;
-      --pink:#ec4899; --purple:#a855f7; --gray:#94a3b8; --red:#ef4444;
-      --stroke:rgba(255,255,255,.14);
-      --shadow: 0 10px 24px rgba(0,0,0,.35);
-      --radius:16px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --bg:#0b1220; --panel:#0f1a2e; --card:#111f39; --ink:#e8efff; --muted:#a9b6d3;
+      --stroke:rgba(255,255,255,.12);
+      --blue:#2f74ff; --cyan:#14b8ff; --green:#22c55e; --amber:#f59e0b; --red:#ef4444; --purple:#a855f7; --gray:#94a3b8;
+      --shadow: 0 14px 30px rgba(0,0,0,.38);
+      --r:16px; --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
-    body{margin:0;background:linear-gradient(180deg,#07102a, #070b16);color:var(--ink);font-family:var(--sans);}
-    header{padding:28px 18px 10px;max-width:1100px;margin:0 auto;}
-    h1{margin:0 0 6px;font-size:26px;letter-spacing:.2px}
-    p{margin:0 0 12px;color:var(--muted);line-height:1.5}
-    .wrap{max-width:1100px;margin:0 auto;padding:0 18px 34px;}
-    .legend{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 16px}
-    .tag{border:1px solid var(--stroke);background:rgba(255,255,255,.04);padding:8px 10px;border-radius:999px;
-         font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
-    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
-    .dot.blue{background:var(--blue)} .dot.cyan{background:var(--cyan)} .dot.green{background:var(--green)}
-    .dot.amber{background:var(--amber)} .dot.pink{background:var(--pink)} .dot.purple{background:var(--purple)}
-    .dot.gray{background:var(--gray)} .dot.red{background:var(--red)}
-
-    section{margin:18px 0 18px;padding:16px;border:1px solid var(--stroke);background:rgba(255,255,255,.03);
-            border-radius:var(--radius);box-shadow:var(--shadow)}
-    section h2{margin:0 0 8px;font-size:18px}
-    section .sub{margin:0 0 14px;color:var(--muted);font-size:13px}
-
-    .flow{
-      display:flex;flex-wrap:wrap;gap:10px;align-items:center;
-      padding:12px;border-radius:14px;background:rgba(0,0,0,.15);border:1px dashed rgba(255,255,255,.14)
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--sans);background:radial-gradient(1200px 600px at 20% 0%, #122452 0%, var(--bg) 55%, #060913 100%);color:var(--ink)}
+    a{color:inherit}
+    .app{display:grid;grid-template-columns: 300px 1fr;min-height:100vh}
+    .side{
+      border-right:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      padding:18px 14px;
     }
-    .col{display:flex;flex-direction:column;gap:10px}
-    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-    .node{
-      min-width:210px; max-width:360px;
-      padding:12px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);
-      background:rgba(255,255,255,.06);
+    .brand{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+    .logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 0 0 1px rgba(255,255,255,.18) inset}
+    .brand h1{font-size:14px;margin:0}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .roleRow{display:flex;gap:10px;align-items:center;margin:10px 0 14px}
+    select, input, textarea{
+      width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+      color:var(--ink); border-radius:12px; padding:10px 10px; outline:none;
     }
-    .node b{display:block;margin-bottom:6px;font-size:13px}
-    .node small{display:block;color:rgba(255,255,255,.76);line-height:1.35}
-    .node .mini{margin-top:8px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.72)}
-    .arrow{
-      font-size:18px;color:rgba(255,255,255,.7);padding:0 4px;user-select:none
+    textarea{min-height:90px; resize:vertical}
+    .nav{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .nav button{
+      text-align:left; padding:10px 12px; border-radius:14px; border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03); color:var(--ink); cursor:pointer;
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
     }
+    .nav button:hover{background:rgba(255,255,255,.06)}
+    .nav button.active{background:rgba(47,116,255,.16); border-color:rgba(47,116,255,.35)}
+    .badge{
+      font-size:11px; color:rgba(255,255,255,.85); padding:3px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.05)
+    }
+    .main{padding:18px}
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding:14px 16px; border:1px solid var(--stroke); border-radius:var(--r);
+      background:rgba(255,255,255,.03); box-shadow:var(--shadow);
+      position:sticky; top:10px; z-index:5;
+    }
+    .title{display:flex; flex-direction:column; gap:3px}
+    .title b{font-size:14px}
+    .title span{font-size:12px;color:var(--muted)}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:var(--ink);
+      padding:9px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .btn.primary{background:rgba(47,116,255,.22); border-color:rgba(47,116,255,.40)}
+    .btn.good{background:rgba(34,197,94,.18); border-color:rgba(34,197,94,.35)}
+    .btn.warn{background:rgba(245,158,11,.18); border-color:rgba(245,158,11,.35)}
+    .btn.danger{background:rgba(239,68,68,.16); border-color:rgba(239,68,68,.33)}
+    .btn:disabled{opacity:.45; cursor:not-allowed}
+    .grid{display:grid; grid-template-columns: 1.25fr .75fr; gap:14px; margin-top:14px}
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      background:rgba(255,255,255,.03);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .card h2{margin:0 0 10px; font-size:13px}
+    .hint{color:var(--muted); font-size:12px; line-height:1.4; margin:0 0 10px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .kpi{
+      flex:1; min-width:160px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(0,0,0,.18);
+    }
+    .kpi b{display:block; font-size:12px}
+    .kpi span{display:block; margin-top:6px; font-size:18px}
+    .kpi small{display:block; color:var(--muted); margin-top:4px}
+    .progressWrap{margin-top:8px}
+    .bar{height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; border:1px solid rgba(255,255,255,.10)}
+    .bar > i{display:block; height:100%; width:40%; background:linear-gradient(90deg,var(--cyan),var(--blue))}
+    .steps{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .step{
+      padding:6px 10px; border-radius:999px; font-size:11px;
+      border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04);
+      color:rgba(255,255,255,.85)
+    }
+    .step.on{background:rgba(20,184,255,.14); border-color:rgba(20,184,255,.30)}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.10)}
+    th,td{padding:10px; font-size:12px; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:top}
+    th{color:rgba(255,255,255,.85); background:rgba(255,255,255,.04); text-align:left}
+    tr:last-child td{border-bottom:none}
     .pill{
-      display:inline-block;margin-top:8px;
-      font-size:11px;padding:4px 8px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8)
+      display:inline-block; padding:3px 8px; border-radius:999px; font-size:11px;
+      border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05); color:rgba(255,255,255,.85)
     }
-    .blue{box-shadow:0 0 0 1px rgba(47,116,255,.25) inset}
-    .cyan{box-shadow:0 0 0 1px rgba(20,184,255,.25) inset}
-    .green{box-shadow:0 0 0 1px rgba(34,197,94,.25) inset}
-    .amber{box-shadow:0 0 0 1px rgba(245,158,11,.25) inset}
-    .pink{box-shadow:0 0 0 1px rgba(236,72,153,.25) inset}
-    .purple{box-shadow:0 0 0 1px rgba(168,85,247,.25) inset}
-    .gray{box-shadow:0 0 0 1px rgba(148,163,184,.25) inset}
-    .red{box-shadow:0 0 0 1px rgba(239,68,68,.25) inset}
-
-    details{margin-top:10px}
-    summary{cursor:pointer;color:rgba(255,255,255,.82);font-size:13px}
-    ul{margin:8px 0 0 18px;color:rgba(255,255,255,.76);line-height:1.45}
-    code{font-family:var(--mono);font-size:11px}
-    footer{color:var(--muted);font-size:12px;margin-top:18px}
+    .pill.blue{border-color:rgba(47,116,255,.35); background:rgba(47,116,255,.18)}
+    .pill.green{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.16)}
+    .pill.amber{border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.16)}
+    .pill.red{border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.14)}
+    .pill.gray{border-color:rgba(148,163,184,.25); background:rgba(148,163,184,.10)}
+    .mono{font-family:var(--mono)}
+    .split{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .footerNote{margin-top:10px; color:var(--muted); font-size:12px; line-height:1.45}
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      padding:10px 12px; border-radius:14px; border:1px solid rgba(255,255,255,.16);
+      background:rgba(10,14,26,.9); color:rgba(255,255,255,.90);
+      box-shadow:var(--shadow); font-size:12px; display:none; max-width:92vw;
+    }
+    .small{font-size:11px;color:var(--muted)}
   </style>
 </head>
 <body>
-  <header>
-    <h1>ISAGO – Flowcharts by video chapter</h1>
-    <p>Designed so a reader understands the flow on first read. Each section matches the chapter list shown in the deck (Introduction → Conclusion).</p>
-
-    <div class="legend">
-      <div class="tag"><span class="dot blue"></span>Airlines / Pool Airlines</div>
-      <div class="tag"><span class="dot green"></span>GHSP / Ground Service Provider</div>
-      <div class="tag"><span class="dot amber"></span>IATA / Program admin</div>
-      <div class="tag"><span class="dot purple"></span>Auditors / Audit Org (GOA/AO)</div>
-      <div class="tag"><span class="dot cyan"></span>Standards / Manuals</div>
-      <div class="tag"><span class="dot gray"></span>Outputs (Registry, Reports, Certificates)</div>
-      <div class="tag"><span class="dot red"></span>Deadlines / Compliance gates</div>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>ISAGO Digital Workflow</h1>
+        <p>Tulip-style demo (no backend)</p>
+      </div>
     </div>
-  </header>
 
-  <div class="wrap">
-
-    <!-- 1) INTRODUCTION -->
-    <section>
-      <h2>1) Introduction — “What is ISAGO & why does it exist?”</h2>
-      <p class="sub">Problem → consequences → why a global audit + sharing model matters.</p>
-
-      <div class="flow">
-        <div class="node green">
-          <b>Ground operations reality</b>
-          <small>Many handlers, many airports, many airline requirements → variation + risk.</small>
-          <span class="pill green">Operational context</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node red">
-          <b>Risks & outcomes</b>
-          <small>Ground hazards affecting flight safety, aircraft damage, personnel injuries, security threats, delays & costs.</small>
-          <span class="pill red">Why it matters</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node amber">
-          <b>Oversight gap</b>
-          <small>Minimal direct oversight over GSP selection/licensing, training, auditing, reporting.</small>
-          <div class="mini">Regulators often hold airlines responsible for GSP oversight</div>
-          <span class="pill amber">Why airlines struggle</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Current situation (before ISAGO)</b>
-          <small>Redundant audits: multiple airlines audit the same GSP, in different ways → inconsistent results.</small>
-          <span class="pill gray">Inefficient & noisy</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node cyan">
-          <b>ISAGO idea</b>
-          <small>One standardized audit system + recognized standards + trained auditors + audit sharing.</small>
-          <span class="pill cyan">Single baseline</span>
-        </div>
+    <div class="roleRow">
+      <div style="flex:1">
+        <div class="small">Role (demo permissions)</div>
+        <select id="roleSel">
+          <option value="auditor">Auditor</option>
+          <option value="station">Station Supervisor</option>
+          <option value="hq">HQ Compliance</option>
+          <option value="admin">Program Admin</option>
+        </select>
       </div>
+    </div>
 
-      <details>
-        <summary>Reader takeaway</summary>
-        <ul>
-          <li>ISAGO exists to reduce operational risk and reduce redundant audits through a shared, standard system.</li>
-        </ul>
-      </details>
-    </section>
+    <div class="small">Apps / Screens</div>
+    <div class="nav" id="nav">
+      <!-- filled by JS -->
+    </div>
 
-    <!-- 2) ISAGO MODEL -->
-    <section>
-      <h2>2) ISAGO Model — “Two-level audits → Registration + Station Accreditation”</h2>
-      <p class="sub">This is the heart of ISAGO: Headquarters/Corporate + Station audit(s).</p>
+    <div class="footerNote">
+      <b>How to read this:</b> left = “screens” like a Tulip app. Each screen has a checklist + what data it collects + what it outputs.
+    </div>
+  </aside>
 
-      <div class="flow">
-        <div class="col">
-          <div class="node green">
-            <b>GHSP decides to pursue ISAGO</b>
-            <small>Defines scope of services + stations to be covered.</small>
-            <span class="pill green">Applicant</span>
-          </div>
-
-          <div class="node cyan">
-            <b>Audit scope (disciplines)</b>
-            <small>Always ORM + operational disciplines (typical): LOD, PAB, HDL, AGM, CGM.</small>
-            <div class="mini"><code>ORM + {LOD,PAB,HDL,AGM,CGM}</code></div>
-          </div>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="col">
-          <div class="node purple">
-            <b>Headquarters / Corporate Audit (MHQ)</b>
-            <small>Checks corporate policies, processes & procedures (network-wide control).</small>
-            <div class="mini">Usually first step for initial registration</div>
-            <span class="pill purple">Audit type: MHQ</span>
-          </div>
-
-          <div class="node purple">
-            <b>Station Audit (STN)</b>
-            <small>Checks local implementation at a specific station (how work is really done on the ground).</small>
-            <span class="pill purple">Audit type: STN</span>
-          </div>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Registration + Station Accreditation</b>
-          <small>After: (1) MHQ + (2) at least one STN closed and approved → GHSP appears on ISAGO Registry; station(s) accredited.</small>
-          <span class="pill gray">Outcome</span>
-        </div>
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="title">
+        <b id="screenTitle">—</b>
+        <span id="screenSub">—</span>
       </div>
-
-      <details>
-        <summary>Important “modern program” details (keeps you accurate today)</summary>
-        <ul>
-          <li><b>Combined Audit (CTN)</b> may be used in specific cases (HQ near station; limited station network).</li>
-          <li>Initial station accreditation audit must happen within a defined window after the initial HQ audit (program-controlled timelines).</li>
-          <li>Registration/Accreditation validity is on a fixed cycle (renewal required before expiry).</li>
-        </ul>
-      </details>
-    </section>
-
-    <!-- 3) DOCUMENTATION SYSTEM -->
-    <section>
-      <h2>3) ISAGO Documentation System — “Standards → Checklists → Reports”</h2>
-      <p class="sub">What auditors use, what GHSPs map to, and what gets produced.</p>
-
-      <div class="flow">
-        <div class="node cyan">
-          <b>Standards layer</b>
-          <small>GOSARPs (requirements) organized inside the ISAGO standards structure (ORM + operational disciplines).</small>
-          <span class="pill cyan">“What good looks like”</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node cyan">
-          <b>Program rules layer</b>
-          <small>Program Manual defines audit types, timelines, closure rules, approvals, renewals.</small>
-          <span class="pill cyan">“How ISAGO is run”</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node purple">
-          <b>Audit execution layer</b>
-          <small>Audit software/checklists + documentation assessment + implementation assessment → findings recorded.</small>
-          <span class="pill purple">“How audits happen”</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Outputs</b>
-          <small>Audit Report + Findings + closure evidence → IATA quality review/approval → Registry listing & report sharing protocol.</small>
-          <span class="pill gray">“What everyone consumes”</span>
-        </div>
-      </div>
-
-      <details>
-        <summary>How the audit starts (DA → IA) in practical terms</summary>
-        <ul>
-          <li><b>DA (Documentation Assessment):</b> auditor validates the GHSP’s gap analysis + controlled documentation before onsite implementation checks.</li>
-          <li><b>IA (Implementation Assessment):</b> onsite/operational verification: interviews, observation, sampling, records, compliance evidence.</li>
-        </ul>
-      </details>
-    </section>
-
-    <!-- 4) IOSA & ISAGO -->
-    <section>
-      <h2>4) IOSA & ISAGO — “How they relate (and how they don’t)”</h2>
-      <p class="sub">IOSA = airline operations; ISAGO = ground operations providers & ground functions.</p>
-
-      <div class="flow">
-        <div class="node blue">
-          <b>IOSA</b>
-          <small>Airline operational safety audit program (airline-centric scope).</small>
-          <span class="pill blue">Airline ops</span>
-        </div>
-
-        <div class="arrow">↔</div>
-
-        <div class="node green">
-          <b>ISAGO</b>
-          <small>Ground operations audit program (GHSP/airline-as-handler) with detailed ground disciplines.</small>
-          <span class="pill green">Ground ops</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node cyan">
-          <b>Key idea</b>
-          <small>ISAGO goes deeper operationally on ground functions than IOSA’s ground sections because it’s purpose-built for ground operations.</small>
-          <span class="pill cyan">Depth on ground</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5) BENEFITS -->
-    <section>
-      <h2>5) ISAGO Benefits — “Who benefits and how”</h2>
-      <p class="sub">Same program, different value per stakeholder.</p>
-
-      <div class="flow">
-        <div class="node blue">
-          <b>For Airlines</b>
-          <small>Fewer redundant audits + standardized visibility into handler safety + access to shared reports (protocol-based).</small>
-          <span class="pill blue">Efficiency + oversight</span>
-        </div>
-
-        <div class="arrow">+</div>
-
-        <div class="node green">
-          <b>For GHSPs</b>
-          <small>One benchmark system; clearer expectations; reduced audit chaos; improved safety management + credibility.</small>
-          <span class="pill green">Benchmark + trust</span>
-        </div>
-
-        <div class="arrow">+</div>
-
-        <div class="node amber">
-          <b>For Regulators / Airports</b>
-          <small>Uniform standards across handlers; can complement oversight; could support airport concession/approval decisions.</small>
-          <span class="pill amber">Uniformity</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6) AUDIT POOL -->
-    <section>
-      <h2>6) ISAGO Audit Pool — “The sharing engine”</h2>
-      <p class="sub">Pool airlines do station audits + get unconditional report access (per the model described in the deck).</p>
-
-      <div class="flow">
-        <div class="node amber">
-          <b>IATA (Program Admin)</b>
-          <small>Manages/administrates the pool + allocates audits + enforces report handling protocols.</small>
-          <span class="pill amber">Allocation & governance</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node blue">
-          <b>Pool Airlines</b>
-          <small>Commit to perform an allocated number of station audits each year.</small>
-          <div class="mini">Also: unconditional access to shared audit reports</div>
-          <span class="pill blue">Contribute + consume</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node purple">
-          <b>Airline-nominated auditors</b>
-          <small>Experienced auditors nominated by pool airlines; trained to conduct ISAGO station audits.</small>
-          <span class="pill purple">Qualified people</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node green">
-          <b>GHSP stations audited (STN)</b>
-          <small>Station-level verification of implementation; findings captured and closed.</small>
-          <span class="pill green">Operational reality</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Audit Reports shared securely</b>
-          <small>IATA provides controlled access to reports and keeps them in a secure environment (per agreed protocol).</small>
-          <span class="pill gray">Trust & reuse</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 7) TRAINING -->
-    <section>
-      <h2>7) ISAGO Training — “Make auditors consistent”</h2>
-      <p class="sub">Training exists so different auditors still produce comparable results.</p>
-
-      <div class="flow">
-        <div class="node purple">
-          <b>Auditor eligibility</b>
-          <small>Auditors must be experienced + trained/qualified for ISAGO (pool airline auditors for station audits in the deck model).</small>
-          <span class="pill purple">Consistency gate</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node amber">
-          <b>Training content focus</b>
-          <small>Audit technique + standards interpretation + reporting + sharing/admin rules.</small>
-          <span class="pill amber">Same language</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Outcome</b>
-          <small>Comparable audit reports across regions → report sharing becomes meaningful and usable.</small>
-          <span class="pill gray">Comparable outputs</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8) PROGRAM STATUS -->
-    <section>
-      <h2>8) Program Status — “Scale & tracking”</h2>
-      <p class="sub">Shows that ISAGO is designed to operate as a global program, not a one-off audit.</p>
-
-      <div class="flow">
-        <div class="node amber">
-          <b>Annual planning</b>
-          <small>Audit application → allocation → scheduling → delivery → approvals → registry updates.</small>
-          <span class="pill amber">Program rhythm</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Registry</b>
-          <small>Public/industry reference point for who is registered + which stations are accredited.</small>
-          <span class="pill gray">Single source</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 9) COSTS -->
-    <section>
-      <h2>9) ISAGO Costs — “Who pays for what” (as described in the deck)</h2>
-      <p class="sub">Costs are split by audit type and who performs it.</p>
-
-      <div class="flow">
-        <div class="row">
-          <div class="node green">
-            <b>Corporate / HQ audit cost</b>
-            <small>Conducted by independent audit organizations (AOs/GOAs); GHSP covers HQ audit cost + travel/accom (deck example shows a 2-year cycle).</small>
-            <span class="pill green">Paid by GHSP</span>
-          </div>
-
-          <div class="arrow">+</div>
-
-          <div class="node blue">
-            <b>Station audit cost</b>
-            <small>Station audits conducted by auditing airlines in the pool; auditing airlines cover their own travel/accom costs inherent to station audits (deck model).</small>
-            <span class="pill blue">Paid by auditing airline</span>
-          </div>
-
-          <div class="arrow">→</div>
-
-          <div class="node gray">
-            <b>Net effect</b>
-            <small>Creates an incentive structure: GHSP invests in corporate control; airlines invest in oversight at stations; everyone reuses shared reports.</small>
-            <span class="pill gray">Shared efficiency</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 10) INSURANCE PROGRAM -->
-    <section>
-      <h2>10) ISAGO Insurance Program — “Risk language for insurance markets”</h2>
-      <p class="sub">The deck links ISAGO with better risk selection/packaging (insurance view of operations quality).</p>
-
-      <div class="flow">
-        <div class="node purple">
-          <b>Operational risk becomes measurable</b>
-          <small>Standard audit outputs + consistent evidence across providers → clearer risk picture.</small>
-          <span class="pill purple">Quantifiable</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node amber">
-          <b>Insurance logic (from the deck)</b>
-          <small>“Selectively bundle” risks → increases competition and certainty of capacity.</small>
-          <span class="pill amber">Market effect</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Result (practical)</b>
-          <small>Better underwriting conversations: who has controls, evidence, and a verified safety management baseline.</small>
-          <span class="pill gray">Better decisions</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 11) IGOM -->
-    <section>
-      <h2>11) IGOM — “Standardizing airline ground manuals”</h2>
-      <p class="sub">IGOM is a separate but related standardization push: reduce variations across airline GOMs.</p>
-
-      <div class="flow">
-        <div class="node blue">
-          <b>Today (problem)</b>
-          <small>Each airline publishes its own Ground Operations Manual (GOM) → for same aircraft type, variations can be big.</small>
-          <span class="pill blue">Variation</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node red">
-          <b>Impact</b>
-          <small>Variations → increased safety risk, aircraft damage risk, inefficiency for handlers.</small>
-          <span class="pill red">Operational friction</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node cyan">
-          <b>IGOM concept</b>
-          <small>Standardized IATA Ground Operations Manual that airlines can adopt as a “core” requirement set.</small>
-          <span class="pill cyan">Common baseline</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 12) HOW TO SCHEDULE -->
-    <section>
-      <h2>12) How to schedule an ISAGO Audit — “Then vs Now”</h2>
-      <p class="sub">The deck shows the older “download + email form” method; today scheduling is handled through IATA ONE Source.</p>
-
-      <div class="flow">
-        <div class="col">
-          <div class="node gray">
-            <b>Method A (as shown in the deck / older flow)</b>
-            <small>1) Download standards<br/>2) Train managers on ORM<br/>3) Train ops on disciplines<br/>4) Fill audit request form<br/>5) Email IATA address</small>
-            <span class="pill gray">Legacy flow</span>
-          </div>
-        </div>
-
-        <div class="arrow">↔</div>
-
-        <div class="col">
-          <div class="node amber">
-            <b>Method B (current ONE Source flow)</b>
-            <small>ONE Source → “Schedule Audits” → select station → choose certification program → choose scopes → fill audit contact form → submit request.</small>
-            <span class="pill amber">Current flow</span>
-          </div>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node red">
-          <b>Program scheduling timelines (IATA)</b>
-          <small>Audit applications are processed/allocated/scheduled on an annual cycle with defined cutoffs and confirmations.</small>
-          <span class="pill red">Time gates</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 13) CONCLUSION -->
-    <section>
-      <h2>13) Conclusion — “Two fundamental aims”</h2>
-      <p class="sub">The “why” restated in one box.</p>
-
-      <div class="flow">
-        <div class="node cyan">
-          <b>ISAGO aims</b>
-          <small>1) Improve operational safety<br/>2) Drive down redundant audits<br/>Modelled on an IOSA-like structure → global benchmark for ground operations.</small>
-          <span class="pill cyan">Bottom line</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ADD-ON: MODERN PROGRAM LIFECYCLE (MOST IMPORTANT FOR REAL WORK) -->
-    <section>
-      <h2>Bonus (Modern ISAGO lifecycle) — “The exact gates that make/keep registration valid”</h2>
-      <p class="sub">If you’re implementing digitally (Tulip/workflows), this is the lifecycle to map into your app logic.</p>
-
-      <div class="flow">
-        <div class="node green">
-          <b>Apply + define scope</b>
-          <small>HQ (MHQ) + station(s) (STN), or eligible Combined (CTN).</small>
-          <span class="pill green">Start</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node purple">
-          <b>Audit(s) executed</b>
-          <small>DA (documentation assessment) + IA (implementation) → findings.</small>
-          <span class="pill purple">Evidence</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node red">
-          <b>Close findings within required windows</b>
-          <small>Initial registration is cancelled if key audits aren’t closed/approved within the program timeline windows.</small>
-          <span class="pill red">Hard gate</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node amber">
-          <b>IATA quality review + approval</b>
-          <small>Reports undergo IATA QC/review before the registry status is granted/renewed.</small>
-          <span class="pill amber">Approval gate</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node gray">
-          <b>Registry listing + validity cycle</b>
-          <small>HQ registration + station accreditation appear on the registry and run on a 24-month validity cycle → renewal audits required before expiry.</small>
-          <span class="pill gray">Maintain</span>
-        </div>
-
-        <div class="arrow">→</div>
-
-        <div class="node purple">
-          <b>Verification audit (if triggered)</b>
-          <small>IATA can direct additional verification audits during the registration period to verify specific nonconformities.</small>
-          <span class="pill purple">Exception flow</span>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      Tip: If you want, tell me the exact title of the YouTube video (shown on YouTube page). I can align the headings to the *exact* timestamps/chapters you see.
-    </footer>
-
-  </div>
+      <div class="actions" id="topActions"></div>
+    </div>
+
+    <div id="screen" style="margin-top:14px"></div>
+
+    <div class="toast" id="toast"></div>
+  </main>
+</div>
+
+<script>
+/** =========================
+ *  Data model (generic)
+ *  ========================= */
+const STORE_KEY = "isago_demo_state_v1";
+
+const defaultState = {
+  currentScreen: "planner",
+  role: "auditor",
+  audit: {
+    id: "AUD-2025-0127",
+    org: "Generic GHSP",
+    station: "DOH (Example)",
+    auditType: "MHQ + STN",
+    scope: ["ORM","LOD","PAB","HDL","AGM","CGM"],
+    startDate: "2025-12-20",
+    endDate: "2025-12-22",
+    status: "Planned", // Planned | DA | IA | Findings | CAPA | Submitted | Approved
+    progress: 18
+  },
+  readiness: {
+    docs: [
+      {k:"Org chart + responsibilities", ok:false, note:""},
+      {k:"Controlled documents (SOP/versioning)", ok:false, note:""},
+      {k:"Training matrix + records", ok:false, note:""},
+      {k:"GSE inventory + maintenance logs", ok:false, note:""},
+      {k:"Incident reporting + investigations", ok:false, note:""},
+      {k:"Internal audits + management review", ok:false, note:""},
+    ]
+  },
+  onsite: {
+    samples: [
+      {area:"Turnaround observation", qty:2, done:false},
+      {area:"Operator interviews", qty:6, done:false},
+      {area:"Training file sampling", qty:8, done:false},
+      {area:"GSE inspection/defect tags", qty:10, done:false},
+      {area:"Safety reporting samples", qty:6, done:false},
+    ],
+    notes: ""
+  },
+  findings: [
+    {
+      id:"F-001",
+      discipline:"ORM",
+      severity:"Major",
+      statement:"Hazard reporting exists but trending + management review evidence is incomplete for last quarter.",
+      owner:"HQ Compliance",
+      due:"2026-01-15",
+      status:"Open", // Open | In Progress | Closed | Rejected
+      capa:{
+        rootCause:"",
+        correction:"",
+        preventive:"",
+        evidence:[]
+      }
+    },
+    {
+      id:"F-002",
+      discipline:"LOD",
+      severity:"Minor",
+      statement:"Wheel chock checks are performed but checklist version control at station is inconsistent.",
+      owner:"Station Supervisor",
+      due:"2026-01-10",
+      status:"Open",
+      capa:{ rootCause:"", correction:"", preventive:"", evidence:[] }
+    }
+  ],
+  approvals: {
+    submitted:false,
+    approved:false,
+    comments:""
+  }
+};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return structuredClone(defaultState);
+    const s = JSON.parse(raw);
+    // basic merge so updates don't break old saved states
+    return deepMerge(structuredClone(defaultState), s);
+  }catch(e){
+    return structuredClone(defaultState);
+  }
+}
+function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+function deepMerge(base, add){
+  for(const k of Object.keys(add||{})){
+    if(add[k] && typeof add[k]==="object" && !Array.isArray(add[k])){
+      base[k] = deepMerge(base[k]||{}, add[k]);
+    }else{
+      base[k] = add[k];
+    }
+  }
+  return base;
+}
+
+let state = loadState();
+
+/** =========================
+ *  UI config
+ *  ========================= */
+const screens = [
+  { id:"planner",  name:"1) Audit Planner", sub:"Define scope → schedule → audit pack", icon:"📅" },
+  { id:"da",       name:"2) Documentation Readiness (DA)", sub:"Checklist + evidence pack before onsite", icon:"📚" },
+  { id:"ia",       name:"3) Onsite Execution (IA)", sub:"Observe + interview + sample records", icon:"👀" },
+  { id:"findings", name:"4) Findings Log", sub:"Record nonconformities + owners + deadlines", icon:"🧾" },
+  { id:"capa",     name:"5) CAPA Builder", sub:"Root cause → actions → evidence → effectiveness", icon:"🛠️" },
+  { id:"closure",  name:"6) Closure & Review", sub:"Submit closures → approve/reject → finalize", icon:"✅" },
+  { id:"dash",     name:"7) Dashboard", sub:"Progress, risks, deadlines, readiness score", icon:"📊" }
+];
+
+const rolePerms = {
+  auditor: { addFinding:true, editCAPA:false, submit:false, approve:false },
+  station: { addFinding:false, editCAPA:true, submit:true, approve:false },
+  hq:      { addFinding:false, editCAPA:true, submit:true, approve:false },
+  admin:   { addFinding:false, editCAPA:false, submit:false, approve:true }
+};
+
+const $ = (sel)=>document.querySelector(sel);
+const el = (tag, attrs={}, children=[])=>{
+  const n = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=>{
+    if(k==="class") n.className=v;
+    else if(k.startsWith("on") && typeof v==="function") n.addEventListener(k.substring(2).toLowerCase(), v);
+    else if(k==="html") n.innerHTML=v;
+    else n.setAttribute(k, v);
+  });
+  (Array.isArray(children)?children:[children]).forEach(c=>{
+    if(c===null || c===undefined) return;
+    if(typeof c==="string") n.appendChild(document.createTextNode(c));
+    else n.appendChild(c);
+  });
+  return n;
+};
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.style.display="none", 2200);
+}
+
+/** =========================
+ *  Render shell
+ *  ========================= */
+function renderNav(){
+  const nav = $("#nav");
+  nav.innerHTML = "";
+  const open = state.currentScreen;
+  screens.forEach(s=>{
+    const b = el("button", {
+      class: open===s.id ? "active": "",
+      onclick: ()=>{ state.currentScreen=s.id; saveState(); render(); }
+    }, [
+      el("span", {html:`${s.icon} ${s.name}`}),
+      el("span", {class:"badge"}, statusBadgeForScreen(s.id))
+    ]);
+    nav.appendChild(b);
+  });
+}
+
+function statusBadgeForScreen(id){
+  const a = state.audit;
+  const fOpen = state.findings.filter(x=>x.status!=="Closed").length;
+  if(id==="planner") return a.status;
+  if(id==="da"){
+    const done = state.readiness.docs.filter(d=>d.ok).length;
+    return `${done}/${state.readiness.docs.length}`;
+  }
+  if(id==="ia"){
+    const done = state.onsite.samples.filter(s=>s.done).length;
+    return `${done}/${state.onsite.samples.length}`;
+  }
+  if(id==="findings") return `${state.findings.length} (${fOpen} open)`;
+  if(id==="capa") return `${state.findings.filter(x=>x.capa.evidence.length>0).length} w/ evidence`;
+  if(id==="closure") return state.approvals.approved ? "Approved" : (state.approvals.submitted ? "Submitted" : "Not sent");
+  if(id==="dash") return `${a.progress}%`;
+  return "—";
+}
+
+function setTopbar(){
+  const s = screens.find(x=>x.id===state.currentScreen);
+  $("#screenTitle").textContent = s?.name || "—";
+  $("#screenSub").textContent = s?.sub || "—";
+
+  const perms = rolePerms[state.role];
+  const actions = $("#topActions");
+  actions.innerHTML = "";
+
+  actions.appendChild(el("button", {class:"btn", onclick:()=>{
+    localStorage.removeItem(STORE_KEY);
+    state = structuredClone(defaultState);
+    saveState(); render(); toast("Reset to demo defaults");
+  }}, "Reset demo"));
+
+  // contextual actions
+  if(state.currentScreen==="findings" && perms.addFinding){
+    actions.appendChild(el("button", {class:"btn primary", onclick:()=>openAddFinding()}, "Add finding"));
+  }
+  if(state.currentScreen==="closure" && perms.submit){
+    actions.appendChild(el("button", {class:"btn warn", onclick:()=>submitForApproval()}, "Submit closures"));
+  }
+  if(state.currentScreen==="closure" && perms.approve){
+    actions.appendChild(el("button", {class:"btn good", onclick:()=>approveAll()}, "Approve"));
+    actions.appendChild(el("button", {class:"btn danger", onclick:()=>rejectSome()}, "Reject (needs work)"));
+  }
+}
+
+$("#roleSel").value = state.role;
+$("#roleSel").addEventListener("change", (e)=>{
+  state.role = e.target.value;
+  saveState(); render(); toast(`Role switched to: ${state.role}`);
+});
+
+/** =========================
+ *  Screens
+ *  ========================= */
+function screenPlanner(){
+  const a = state.audit;
+  const left = el("div", {class:"card"}, [
+    el("h2", {}, "Audit Header (what you’d see in a Tulip app)"),
+    el("p", {class:"hint"}, "This screen explains the audit in one glance: type, scope, dates, and current phase."),
+    el("div", {class:"split"}, [
+      el("div", {}, [
+        el("div", {class:"small"}, "Audit ID"),
+        el("div", {class:"mono"}, a.id),
+      ]),
+      el("div", {}, [
+        el("div", {class:"small"}, "Status"),
+        el("div", {}, el("span", {class:"pill blue"}, a.status))
+      ])
+    ]),
+    el("div", {class:"split", style:"margin-top:10px"}, [
+      el("div", {}, [
+        el("div", {class:"small"}, "Organization"),
+        el("div", {}, a.org),
+      ]),
+      el("div", {}, [
+        el("div", {class:"small"}, "Station"),
+        el("div", {}, a.station),
+      ])
+    ]),
+    el("div", {class:"split", style:"margin-top:10px"}, [
+      el("div", {}, [
+        el("div", {class:"small"}, "Audit Type"),
+        el("div", {}, el("span", {class:"pill gray"}, a.auditType)),
+      ]),
+      el("div", {}, [
+        el("div", {class:"small"}, "Dates"),
+        el("div", {}, `${a.startDate} → ${a.endDate}`),
+      ])
+    ]),
+    el("div", {style:"margin-top:10px"}, [
+      el("div", {class:"small"}, "Scope (disciplines)"),
+      el("div", {class:"row", style:"margin-top:6px"}, a.scope.map(x=>el("span", {class:"pill cyan"}, x)))
+    ]),
+    el("div", {class:"progressWrap"}, [
+      el("div", {class:"small"}, "Overall progress"),
+      el("div", {class:"bar"}, el("i", {style:`width:${a.progress}%`})),
+      el("div", {class:"small", style:"margin-top:6px"}, "Tip: In a real Tulip deployment, this % is calculated from completed tasks + closed findings.")
+    ]),
+    el("div", {class:"steps"}, [
+      stepPill("Plan", a.status==="Planned"),
+      stepPill("DA", ["DA","IA","Findings","CAPA","Submitted","Approved"].includes(a.status)),
+      stepPill("IA", ["IA","Findings","CAPA","Submitted","Approved"].includes(a.status)),
+      stepPill("Findings", ["Findings","CAPA","Submitted","Approved"].includes(a.status)),
+      stepPill("CAPA", ["CAPA","Submitted","Approved"].includes(a.status)),
+      stepPill("Review", ["Submitted","Approved"].includes(a.status)),
+      stepPill("Approved", a.status==="Approved"),
+    ])
+  ]);
+
+  const right = el("div", {class:"card"}, [
+    el("h2", {}, "What this screen “collects”"),
+    el("p", {class:"hint"}, "In a real app, this is where you lock the scope and auto-generate audit packs (checklists, sampling plan, evidence requests)."),
+    el("div", {class:"kpi"}, [
+      el("b", {}, "Inputs"),
+      el("small", {}, "Services + stations + dates + audit type + scope disciplines")
+    ]),
+    el("div", {class:"kpi", style:"margin-top:10px"}, [
+      el("b", {}, "Outputs"),
+      el("small", {}, "Audit plan + evidence request list + station sampling plan + kickoff agenda")
+    ]),
+    el("button", {
+      class:"btn primary",
+      style:"margin-top:12px;width:100%",
+      onclick:()=>{
+        state.audit.status="DA";
+        state.audit.progress=Math.max(state.audit.progress, 25);
+        saveState(); render(); toast("Moved audit to: DA (Documentation readiness)");
+      }
+    }, "Start Documentation Readiness (DA)")
+  ]);
+
+  return el("div", {class:"grid"}, [left, right]);
+}
+
+function stepPill(name, on){ return el("span", {class:"step"+(on?" on": "")}, name); }
+
+function screenDA(){
+  const docs = state.readiness.docs;
+  const done = docs.filter(d=>d.ok).length;
+  const pct = Math.round((done/docs.length)*100);
+
+  const left = el("div", {class:"card"}, [
+    el("h2", {}, "Documentation Readiness Checklist (DA)"),
+    el("p", {class:"hint"},
+      "Purpose: prove you have a controlled system before the auditor checks real operations onsite. Check items, add short notes, and attach evidence (simulated)."),
+    el("div", {class:"row"}, [
+      el("div", {class:"kpi"}, [el("b", {}, "Readiness score"), el("span", {}, `${pct}%`), el("small", {}, `${done}/${docs.length} completed`) ]),
+      el("div", {class:"kpi"}, [el("b", {}, "Audit phase"), el("span", {}, state.audit.status), el("small", {}, "DA → IA → Findings → CAPA → Review") ]),
+    ]),
+    el("div", {class:"progressWrap"}, [
+      el("div", {class:"bar"}, el("i", {style:`width:${pct}%`})),
+    ]),
+    el("table", {style:"margin-top:12px"}, [
+      el("thead", {}, el("tr", {}, [
+        el("th", {}, "Item"),
+        el("th", {}, "Done"),
+        el("th", {}, "Notes (short)"),
+      ])),
+      el("tbody", {}, docs.map((d, idx)=>{
+        return el("tr", {}, [
+          el("td", {}, d.k),
+          el("td", {}, checkbox(d.ok, (v)=>{ d.ok=v; bumpProgress(); saveState(); render(); })),
+          el("td", {}, el("input", {
+            value: d.note || "",
+            placeholder:"e.g., link to SOP / location / owner",
+            oninput:(e)=>{ d.note=e.target.value; saveState(); }
+          }))
+        ]);
+      }))
+    ])
+  ]);
+
+  const right = el("div", {class:"card"}, [
+    el("h2", {}, "Evidence Pack (what you’d upload)"),
+    el("p", {class:"hint"},
+      "In a real Tulip app, each item links to a document (SOP), record sample, or photo. Here we explain the intent."),
+    evidenceCard("Controlled Documents", "SOPs, forms, version control, distribution proof"),
+    evidenceCard("Training & Competence", "Matrix, certifications, OJT sign-offs, recurrent plan"),
+    evidenceCard("Safety / ORM", "Hazards, risk assessments, incident trends, management review"),
+    evidenceCard("GSE / Equipment", "Inventory, maintenance schedule, defect tags, inspections"),
+    el("button", {
+      class:"btn primary", style:"margin-top:12px;width:100%",
+      onclick:()=>{
+        if(done<docs.length) return toast("Finish DA checklist first (or mark N/A in real system).");
+        state.audit.status="IA";
+        state.audit.progress=Math.max(state.audit.progress, 40);
+        saveState(); render(); toast("Moved audit to: IA (Onsite execution)");
+      }
+    }, "Proceed to Onsite Execution (IA)")
+  ]);
+
+  return el("div", {class:"grid"}, [left, right]);
+}
+
+function evidenceCard(title, desc){
+  return el("div", {class:"kpi", style:"margin-top:10px"}, [
+    el("b", {}, title),
+    el("small", {}, desc),
+    el("div", {class:"pill gray", style:"margin-top:8px"}, "Attachment: simulated")
+  ]);
+}
+
+function screenIA(){
+  const samples = state.onsite.samples;
+  const done = samples.filter(s=>s.done).length;
+  const pct = Math.round((done/samples.length)*100);
+
+  const left = el("div", {class:"card"}, [
+    el("h2", {}, "Onsite Execution (IA): sampling plan"),
+    el("p", {class:"hint"},
+      "This is the “watch the operation” part: observations + interviews + record sampling. Mark tasks complete as you cover shifts/turnarounds."),
+    el("div", {class:"row"}, [
+      el("div", {class:"kpi"}, [el("b", {}, "Coverage"), el("span", {}, `${pct}%`), el("small", {}, `${done}/${samples.length} sampling tasks done`) ]),
+      el("div", {class:"kpi"}, [el("b", {}, "Goal"), el("span", {}, "No surprises"), el("small", {}, "Daily debrief keeps closure smooth") ]),
+    ]),
+    el("div", {class:"progressWrap"}, [
+      el("div", {class:"bar"}, el("i", {style:`width:${pct}%`})),
+    ]),
+    el("table", {style:"margin-top:12px"}, [
+      el("thead", {}, el("tr", {}, [
+        el("th", {}, "Sampling area"),
+        el("th", {}, "Target qty"),
+        el("th", {}, "Done"),
+      ])),
+      el("tbody", {}, samples.map(s=>{
+        return el("tr", {}, [
+          el("td", {}, s.area),
+          el("td", {}, String(s.qty)),
+          el("td", {}, checkbox(s.done, (v)=>{ s.done=v; bumpProgress(); saveState(); render(); })),
+        ]);
+      }))
+    ]),
+    el("div", {style:"margin-top:10px"}, [
+      el("div", {class:"small"}, "Auditor notes (what you saw)"),
+      el("textarea", {
+        placeholder:"Short notes: issues, good practices, evidence refs…",
+        oninput:(e)=>{ state.onsite.notes=e.target.value; saveState(); },
+      }, state.onsite.notes || "")
+    ])
+  ]);
+
+  const perms = rolePerms[state.role];
+  const right = el("div", {class:"card"}, [
+    el("h2", {}, "Daily Debrief (keeps things clean)"),
+    el("p", {class:"hint"},
+      "Tulip-style: after each day/shift, you log what was covered and what evidence is still missing. That prevents last-minute chaos."),
+    el("div", {class:"kpi"}, [el("b", {}, "Debrief checklist"), el("small", {}, "☑ Coverage completed  ☑ Open evidence requests  ☑ Preliminary findings shared")]),
+    el("div", {class:"kpi", style:"margin-top:10px"}, [el("b", {}, "Next step"), el("small", {}, "Convert observations into structured findings with owners & deadlines.")]),
+    el("button", {
+      class:"btn primary", style:"margin-top:12px;width:100%",
+      onclick:()=>{
+        if(done<samples.length) return toast("Complete sampling plan first (or document why not).");
+        state.audit.status="Findings";
+        state.audit.progress=Math.max(state.audit.progress, 55);
+        saveState(); render(); toast("Moved audit to: Findings");
+        state.currentScreen="findings"; render();
+      }
+    }, "Go to Findings Log"),
+    el("div", {class:"footerNote"}, [
+      el("b", {}, "Permissions note: "),
+      el("span", {}, perms.addFinding ? "You can add findings." : "Your role cannot add findings in this demo.")
+    ])
+  ]);
+
+  return el("div", {class:"grid"}, [left, right]);
+}
+
+function screenFindings(){
+  const perms = rolePerms[state.role];
+  const f = state.findings;
+
+  const left = el("div", {class:"card"}, [
+    el("h2", {}, "Findings Log (single source of truth)"),
+    el("p", {class:"hint"}, "Each finding must be: clear statement → standard reference (not shown here) → owner → due date → closure evidence."),
+    el("table", {}, [
+      el("thead", {}, el("tr", {}, [
+        el("th", {}, "ID"),
+        el("th", {}, "Discipline"),
+        el("th", {}, "Severity"),
+        el("th", {}, "Statement"),
+        el("th", {}, "Owner / Due"),
+        el("th", {}, "Status"),
+      ])),
+      el("tbody", {}, f.map(x=>{
+        return el("tr", {}, [
+          el("td", {class:"mono"}, x.id),
+          el("td", {}, el("span", {class:"pill cyan"}, x.discipline)),
+          el("td", {}, severityPill(x.severity)),
+          el("td", {}, x.statement),
+          el("td", {}, el("div", {}, [
+            el("div", {}, x.owner),
+            el("div", {class:"small"}, `Due: ${x.due}`)
+          ])),
+          el("td", {}, statusPill(x.status)),
+        ]);
+      }))
+    ])
+  ]);
+
+  const right = el("div", {class:"card"}, [
+    el("h2", {}, "What happens next"),
+    el("p", {class:"hint"},
+      "The GHSP builds CAPA per finding: root cause → correction → prevention → evidence. Then submits to review."),
+    el("div", {class:"kpi"}, [
+      el("b", {}, "Open findings"),
+      el("span", {}, String(f.filter(x=>x.status!=="Closed").length)),
+      el("small", {}, "Track closure against deadlines")
+    ]),
+    el("button", {
+      class:"btn primary", style:"margin-top:12px;width:100%",
+      onclick:()=>{
+        state.currentScreen="capa";
+        saveState(); render();
+      }
+    }, "Build CAPA & Evidence"),
+    el("button", {
+      class:"btn", style:"margin-top:10px;width:100%",
+      onclick:()=>{
+        // quick demo: mark all open as In Progress
+        f.forEach(x=>{ if(x.status==="Open") x.status="In Progress"; });
+        bumpProgress(); saveState(); render(); toast("Marked Open findings as In Progress");
+      }
+    }, "Mark findings “In Progress”"),
+    el("div", {class:"footerNote"}, [
+      el("b", {}, "Permissions: "),
+      el("span", {}, perms.addFinding ? "Auditor can add findings." : "Only auditor adds findings (in this demo).")
+    ])
+  ]);
+
+  return el("div", {class:"grid"}, [left, right]);
+}
+
+function severityPill(sev){
+  if(sev==="Major") return el("span", {class:"pill red"}, "Major");
+  if(sev==="Minor") return el("span", {class:"pill amber"}, "Minor");
+  return el("span", {class:"pill gray"}, sev);
+}
+function statusPill(st){
+  if(st==="Closed") return el("span", {class:"pill green"}, "Closed");
+  if(st==="In Progress") return el("span", {class:"pill blue"}, "In Progress");
+  if(st==="Rejected") return el("span", {class:"pill red"}, "Rejected");
+  return el("span", {class:"pill gray"}, st);
+}
+
+function screenCAPA(){
+  const perms = rolePerms[state.role];
+  const canEdit = perms.editCAPA;
+
+  const left = el("div", {class:"card"}, [
+    el("h2", {}, "CAPA Builder (per finding)"),
+    el("p", {class:"hint"},
+      "Good CAPA passes audits because it proves: root cause (why) → fix (now) → prevention (forever) → evidence + effectiveness check."),
+    el("div", {class:"small"}, "Select a finding"),
+    el("select", {id:"findingSel", onchange:()=>render()}, state.findings.map(x=>{
+      const opt = el("option", {value:x.id}, `${x.id} • ${x.discipline} • ${x.severity}`);
+      return opt;
+    }))
+  ]);
+
+  // determine selected finding
+  const selectedId = ($("#findingSel")?.value) || state.findings[0]?.id;
+  const fx = state.findings.find(x=>x.id===selectedId) || state.findings[0];
+
+  const form = el("div", {style:"margin-top:12px"}, [
+    el("div", {class:"kpi"}, [
+      el("b", {}, `Finding ${fx.id}`),
+      el("small", {}, fx.statement)
+    ]),
+    el("div", {class:"split", style:"margin-top:10px"}, [
+      el("div", {}, [
+        el("div", {class:"small"}, "Root cause (why it happened)"),
+        el("textarea", {
+          disabled: !canEdit,
+          oninput:(e)=>{ fx.capa.rootCause=e.target.value; saveState(); }
+        }, fx.capa.rootCause || "")
+      ]),
+      el("div", {}, [
+        el("div", {class:"small"}, "Correction (fix now)"),
+        el("textarea", {
+          disabled: !canEdit,
+          oninput:(e)=>{ fx.capa.correction=e.target.value; saveState(); }
+        }, fx.capa.correction || "")
+      ])
+    ]),
+    el("div", {style:"margin-top:10px"}, [
+      el("div", {class:"small"}, "Preventive action (stop recurrence)"),
+      el("textarea", {
+        disabled: !canEdit,
+        oninput:(e)=>{ fx.capa.preventive=e.target.value; saveState(); }
+      }, fx.capa.preventive || "")
+    ]),
+    el("div", {style:"margin-top:10px"}, [
+      el("div", {class:"small"}, "Evidence attachments (simulated)"),
+      el("div", {class:"row", style:"margin-top:8px"}, [
+        el("button", {
+          class:"btn",
+          disabled: !canEdit,
+          onclick:()=>{
+            fx.capa.evidence.push({name:`SOP Update v${fx.capa.evidence.length+1}`, ts:new Date().toISOString()});
+            fx.status="In Progress";
+            bumpProgress(); saveState(); render(); toast("Added evidence: SOP Update");
+          }
+        }, "Attach SOP update"),
+        el("button", {
+          class:"btn",
+          disabled: !canEdit,
+          onclick:()=>{
+            fx.capa.evidence.push({name:`Training record batch ${fx.capa.evidence.length+1}`, ts:new Date().toISOString()});
+            fx.status="In Progress";
+            bumpProgress(); saveState(); render(); toast("Added evidence: Training records");
+          }
+        }, "Attach training records"),
+        el("button", {
+          class:"btn",
+          disabled: !canEdit,
+          onclick:()=>{
+            fx.capa.evidence.push({name:`Photo/log evidence ${fx.capa.evidence.length+1}`, ts:new Date().toISOString()});
+            fx.status="In Progress";
+            bumpProgress(); saveState(); render(); toast("Added evidence: Photo/log");
+          }
+        }, "Attach photo/log")
+      ]),
+      el("div", {style:"margin-top:10px"}, [
+        el("table", {}, [
+          el("thead", {}, el("tr", {}, [
+            el("th", {}, "Evidence"),
+            el("th", {}, "Timestamp"),
+            el("th", {}, "Action"),
+          ])),
+          el("tbody", {}, (fx.capa.evidence.length? fx.capa.evidence : [{name:"—", ts:"—"}]).map((e, i)=>{
+            return el("tr", {}, [
+              el("td", {}, e.name),
+              el("td", {class:"mono"}, e.ts==="—"?"—":e.ts.replace("T"," ").replace("Z","")),
+              el("td", {}, e.name==="—" ? "—" : el("button", {
+                class:"btn danger",
+                disabled: !canEdit,
+                onclick:()=>{
+                  fx.capa.evidence.splice(i,1);
+                  saveState(); render(); toast("Removed evidence");
+                }
+              }, "Remove"))
+            ]);
+          }))
+        ])
+      ])
+    ]),
+    el("div", {class:"row", style:"margin-top:10px"}, [
+      el("button", {
+        class:"btn good",
+        disabled: !canEdit,
+        onclick:()=>{
+          if(!fx.capa.rootCause || !fx.capa.correction || !fx.capa.preventive || fx.capa.evidence.length===0){
+            return toast("Fill CAPA fields + attach at least 1 evidence item.");
+          }
+          fx.status="Closed";
+          state.audit.status="CAPA";
+          state.audit.progress=Math.max(state.audit.progress, 75);
+          bumpProgress(); saveState(); render(); toast(`Marked ${fx.id} as Closed`);
+        }
+      }, "Mark this finding Closed"),
+      el("button", {
+        class:"btn primary",
+        onclick:()=>{
+          state.currentScreen="closure";
+          saveState(); render();
+        }
+      }, "Go to Closure & Review")
+    ]),
+    el("div", {class:"footerNote"}, [
+      el("b", {}, "Permissions note: "),
+      el("span", {}, canEdit ? "You can edit CAPA in this demo." : "Only GHSP roles edit CAPA (Station/HQ).")
+    ])
+  ]);
+
+  left.appendChild(form);
+
+  const right = el("div", {class:"card"}, [
+    el("h2", {}, "CAPA quality rules (simple & strict)"),
+    el("div", {class:"kpi"}, [el("b", {}, "1) Root cause ≠ symptom"), el("small", {}, "Bad: “staff forgot” • Good: training gap / unclear SOP / no supervision check")]),
+    el("div", {class:"kpi", style:"margin-top:10px"}, [el("b", {}, "2) Prevention is measurable"), el("small", {}, "Add control: checklist, audit cadence, KPI, supervisor sign-off")]),
+    el("div", {class:"kpi", style:"margin-top:10px"}, [el("b", {}, "3) Evidence must prove implementation"), el("small", {}, "SOP update + training record + sample logs/photos = strong package")]),
+    el("div", {class:"kpi", style:"margin-top:10px"}, [el("b", {}, "4) Effectiveness check"), el("small", {}, "Re-audit sampling or KPI trend after 2–4 weeks")]),
+  ]);
+
+  return el("div", {class:"grid"}, [left, right]);
+}
+
+function screenClosure(){
+  const perms = rolePerms[state.role];
+  const open = state.findings.filter(x=>x.status!=="Closed");
+  const closed = state.findings.filter(x=>x.status==="Closed");
+
+  const left = el("div", {class:"card"}, [
+    el("h2", {}, "Closure Pack (what gets submitted for review)"),
+    el("p", {class:"hint"},
+      "Submit only when closures are complete. Reviewer can approve (finalize) or reject (needs better evidence)."),
+    el("div", {class:"row"}, [
+      el("div", {class:"kpi"}, [el("b", {}, "Closed"), el("span", {}, String(closed.length)), el("small", {}, "Ready for review")]),
+      el("div", {class:"kpi"}, [el("b", {}, "Open"), el("span", {}, String(open.length)), el("small", {}, "Must be closed before submission")]),
+    ]),
+    el("table", {style:"margin-top:12px"}, [
+      el("thead", {}, el("tr", {}, [
+        el("th", {}, "Finding"),
+        el("th", {}, "Status"),
+        el("th", {}, "Evidence count"),
+        el("th", {}, "Due"),
+      ])),
+      el("tbody", {}, state.findings.map(x=>el("tr", {}, [
+        el("td", {class:"mono"}, x.id),
+        el("td", {}, statusPill(x.status)),
+        el("td", {}, String(x.capa.evidence.length)),
+        el("td", {}, x.due),
+      ])))
+    ]),
+    el("div", {style:"margin-top:10px"}, [
+      el("div", {class:"small"}, "Submission note (optional)"),
+      el("textarea", {
+        disabled: !perms.submit,
+        oninput:(e)=>{ state.approvals.comments=e.target.value; saveState(); }
+      }, state.approvals.comments || "")
+    ]),
+    el("div", {class:"row", style:"margin-top:10px"}, [
+      el("button", {class:"btn warn", disabled: !perms.submit, onclick:()=>submitForApproval()}, "Submit closures"),
+      el("button", {class:"btn", onclick:()=>{state.currentScreen="dash"; saveState(); render();}}, "View dashboard")
+    ]),
+    el("div", {class:"footerNote"}, [
+      el("b", {}, "Tip: "),
+      el("span", {}, "In a real deployment, “Submit” triggers a workflow: notify reviewer → lock edits → SLA timer.")
+    ])
+  ]);
+
+  const right = el("div", {class:"card"}, [
+    el("h2", {}, "Reviewer Decision"),
+    el("p", {class:"hint"},
+      "Program admin / quality reviewer checks closure evidence and either approves or rejects."),
+    el("div", {class:"kpi"}, [
+      el("b", {}, "Current state"),
+      el("span", {}, state.approvals.approved ? "Approved" : (state.approvals.submitted ? "Submitted" : "Not submitted")),
+      el("small", {}, state.approvals.submitted ? "Under review" : "Waiting for submission")
+    ]),
+    el("div", {class:"row", style:"margin-top:10px"}, [
+      el("button", {class:"btn good", disabled: !perms.approve, onclick:()=>approveAll()}, "Approve"),
+      el("button", {class:"btn danger", disabled: !perms.approve, onclick:()=>rejectSome()}, "Reject (needs work)")
+    ]),
+    el("div", {class:"footerNote"}, [
+      el("b", {}, "Permission note: "),
+      el("span", {}, perms.approve ? "You can approve/reject." : "Only Program Admin approves/rejects in this demo.")
+    ])
+  ]);
+
+  return el("div", {class:"grid"}, [left, right]);
+}
+
+function screenDash(){
+  const a = state.audit;
+  const daDone = state.readiness.docs.filter(d=>d.ok).length;
+  const daTotal = state.readiness.docs.length;
+  const iaDone = state.onsite.samples.filter(s=>s.done).length;
+  const iaTotal = state.onsite.samples.length;
+  const open = state.findings.filter(x=>x.status!=="Closed");
+  const overdue = open.filter(x=>new Date(x.due) < new Date("2025-12-17")); // demo "today"
+  const closuresReady = state.findings.filter(x=>x.status==="Closed" && x.capa.evidence.length>0).length;
+
+  const left = el("div", {class:"card"}, [
+    el("h2", {}, "Operational Dashboard (what leadership wants)"),
+    el("p", {class:"hint"}, "One screen: readiness, coverage, risks, deadlines, and where the bottleneck is."),
+    el("div", {class:"row"}, [
+      kpiBox("Audit", `${a.id}`, `${a.org} • ${a.station}`),
+      kpiBox("Phase", a.status, `Progress: ${a.progress}%`),
+      kpiBox("DA readiness", `${daDone}/${daTotal}`, `${Math.round(daDone/daTotal*100)}%`),
+      kpiBox("IA coverage", `${iaDone}/${iaTotal}`, `${Math.round(iaDone/iaTotal*100)}%`),
+    ]),
+    el("div", {class:"row", style:"margin-top:10px"}, [
+      kpiBox("Open findings", String(open.length), overdue.length ? `${overdue.length} overdue (demo clock)` : "No overdue"),
+      kpiBox("Closures ready", String(closuresReady), "Closed + evidence attached"),
+      kpiBox("Submission", state.approvals.submitted ? "Submitted" : "Not submitted", state.approvals.approved ? "Approved" : "Pending"),
+      kpiBox("Risk focus", open.some(x=>x.severity==="Major") ? "Major exists" : "No major", "Prioritize majors first"),
+    ])
+  ]);
+
+  const right = el("div", {class:"card"}, [
+    el("h2", {}, "Next Best Action (auto-guidance)"),
+    el("p", {class:"hint"}, "A Tulip app usually tells users what to do next based on data."),
+    el("div", {class:"kpi"}, [
+      el("b", {}, "Recommended"),
+      el("small", {}, nextActionText())
+    ]),
+    el("button", {class:"btn primary", style:"margin-top:12px;width:100%", onclick:()=>jumpToNext()}, "Take me there"),
+    el("div", {class:"footerNote"}, [
+      el("b", {}, "How this maps to real ops: "),
+      el("span", {}, "This dashboard can be a TV view for audits across multiple stations with filters by discipline.")
+    ])
+  ]);
+
+  return el("div", {class:"grid"}, [left, right]);
+}
+
+function kpiBox(title, value, sub){
+  return el("div", {class:"kpi"}, [
+    el("b", {}, title),
+    el("span", {}, value),
+    el("small", {}, sub || "")
+  ]);
+}
+
+/** =========================
+ *  Actions
+ *  ========================= */
+function bumpProgress(){
+  // Simple heuristic for demo
+  const da = state.readiness.docs.filter(d=>d.ok).length / state.readiness.docs.length;
+  const ia = state.onsite.samples.filter(s=>s.done).length / state.onsite.samples.length;
+  const closed = state.findings.filter(f=>f.status==="Closed").length / Math.max(1, state.findings.length);
+  const submitted = state.approvals.submitted ? 0.1 : 0;
+  const approved = state.approvals.approved ? 0.15 : 0;
+  const p = Math.round((0.25*da + 0.25*ia + 0.35*closed + submitted + approved) * 100);
+  state.audit.progress = Math.max(state.audit.progress, Math.min(100, p));
+  if(state.approvals.approved) state.audit.status="Approved";
+  saveState();
+}
+
+function submitForApproval(){
+  const open = state.findings.filter(x=>x.status!=="Closed");
+  if(open.length) return toast("Cannot submit: some findings are still open.");
+  state.approvals.submitted = true;
+  state.audit.status = "Submitted";
+  state.audit.progress = Math.max(state.audit.progress, 88);
+  bumpProgress(); saveState(); render(); toast("Submitted closures for review");
+}
+
+function approveAll(){
+  if(!state.approvals.submitted) return toast("Nothing to approve: not submitted yet.");
+  state.approvals.approved = true;
+  state.audit.status = "Approved";
+  state.audit.progress = 100;
+  bumpProgress(); saveState(); render(); toast("Approved ✅ Audit finalized");
+}
+
+function rejectSome(){
+  if(!state.approvals.submitted) return toast("Nothing to reject: not submitted yet.");
+  // demo: reject first closed finding if exists
+  const f = state.findings.find(x=>x.status==="Closed");
+  if(f){
+    f.status="Rejected";
+    state.approvals.approved=false;
+    state.approvals.submitted=false;
+    state.audit.status="CAPA";
+    state.audit.progress=Math.min(state.audit.progress, 82);
+    bumpProgress(); saveState(); render();
+    toast(`Rejected ${f.id}: needs stronger evidence`);
+  }else{
+    toast("No closed finding to reject (demo).");
+  }
+}
+
+function openAddFinding(){
+  const id = `F-${String(state.findings.length+1).padStart(3,"0")}`;
+  const newF = {
+    id,
+    discipline:"ORM",
+    severity:"Minor",
+    statement:"(Write a clear statement of what failed and where.)",
+    owner:"Station Supervisor",
+    due:"2026-01-20",
+    status:"Open",
+    capa:{rootCause:"", correction:"", preventive:"", evidence:[]}
+  };
+  state.findings.unshift(newF);
+  bumpProgress(); saveState(); render();
+  toast(`Added finding ${id}`);
+}
+
+function checkbox(value, onChange){
+  const c = el("input", {type:"checkbox"});
+  c.checked = !!value;
+  c.addEventListener("change", ()=>onChange(c.checked));
+  c.style.width="18px"; c.style.height="18px"; c.style.accentColor="#2f74ff";
+  return c;
+}
+
+function nextActionText(){
+  const a = state.audit.status;
+  const daDone = state.readiness.docs.filter(d=>d.ok).length;
+  const daTotal = state.readiness.docs.length;
+  const iaDone = state.onsite.samples.filter(s=>s.done).length;
+  const iaTotal = state.onsite.samples.length;
+  const open = state.findings.filter(x=>x.status!=="Closed");
+
+  if(a==="Planned") return "Start DA: complete the documentation readiness checklist and prepare evidence pack.";
+  if(a==="DA" && daDone<daTotal) return "Finish DA checklist items (and add notes) until readiness is complete.";
+  if((a==="DA" || a==="IA") && daDone===daTotal && iaDone<iaTotal) return "Complete IA sampling: observations + interviews + records for targeted quantities.";
+  if(a==="Findings" || (open.length && a!=="Submitted" && a!=="Approved")) return "Build CAPA for each finding: root cause → correction → prevention → attach evidence → mark closed.";
+  if(open.length===0 && !state.approvals.submitted) return "Submit closures for review (locks CAPA edits and notifies reviewer).";
+  if(state.approvals.submitted && !state.approvals.approved) return "Reviewer action needed: approve or reject closure pack.";
+  return "Audit is finalized. Maintain: KPIs, internal audits, training refresh, renewal planning.";
+}
+
+function jumpToNext(){
+  const a = state.audit.status;
+  const daDone = state.readiness.docs.filter(d=>d.ok).length;
+  const daTotal = state.readiness.docs.length;
+  const iaDone = state.onsite.samples.filter(s=>s.done).length;
+  const iaTotal = state.onsite.samples.length;
+  const open = state.findings.filter(x=>x.status!=="Closed");
+
+  if(a==="Planned"){ state.currentScreen="da"; }
+  else if(a==="DA" && daDone<daTotal){ state.currentScreen="da"; }
+  else if((a==="DA" || a==="IA") && iaDone<iaTotal){ state.currentScreen="ia"; }
+  else if(open.length){ state.currentScreen="capa"; }
+  else { state.currentScreen="closure"; }
+
+  saveState(); render(); toast("Navigated to next best action");
+}
+
+/** =========================
+ *  Main render
+ *  ========================= */
+function render(){
+  renderNav();
+  setTopbar();
+
+  const host = $("#screen");
+  host.innerHTML = "";
+
+  const id = state.currentScreen;
+  let content = null;
+
+  if(id==="planner") content = screenPlanner();
+  if(id==="da") content = screenDA();
+  if(id==="ia") content = screenIA();
+  if(id==="findings") content = screenFindings();
+  if(id==="capa") content = screenCAPA();
+  if(id==="closure") content = screenClosure();
+  if(id==="dash") content = screenDash();
+
+  host.appendChild(content || el("div", {class:"card"}, "Unknown screen"));
+}
+
+render();
+</script>
 </body>
 </html>
