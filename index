@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ISAGO – Intuitive Flowcharts (by video chapter)</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111a2e; --ink:#e7eefc; --muted:#a9b6d3;
+      --blue:#2f74ff; --cyan:#14b8ff; --green:#22c55e; --amber:#f59e0b;
+      --pink:#ec4899; --purple:#a855f7; --gray:#94a3b8; --red:#ef4444;
+      --stroke:rgba(255,255,255,.14);
+      --shadow: 0 10px 24px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    body{margin:0;background:linear-gradient(180deg,#07102a, #070b16);color:var(--ink);font-family:var(--sans);}
+    header{padding:28px 18px 10px;max-width:1100px;margin:0 auto;}
+    h1{margin:0 0 6px;font-size:26px;letter-spacing:.2px}
+    p{margin:0 0 12px;color:var(--muted);line-height:1.5}
+    .wrap{max-width:1100px;margin:0 auto;padding:0 18px 34px;}
+    .legend{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 16px}
+    .tag{border:1px solid var(--stroke);background:rgba(255,255,255,.04);padding:8px 10px;border-radius:999px;
+         font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .dot.blue{background:var(--blue)} .dot.cyan{background:var(--cyan)} .dot.green{background:var(--green)}
+    .dot.amber{background:var(--amber)} .dot.pink{background:var(--pink)} .dot.purple{background:var(--purple)}
+    .dot.gray{background:var(--gray)} .dot.red{background:var(--red)}
+
+    section{margin:18px 0 18px;padding:16px;border:1px solid var(--stroke);background:rgba(255,255,255,.03);
+            border-radius:var(--radius);box-shadow:var(--shadow)}
+    section h2{margin:0 0 8px;font-size:18px}
+    section .sub{margin:0 0 14px;color:var(--muted);font-size:13px}
+
+    .flow{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+      padding:12px;border-radius:14px;background:rgba(0,0,0,.15);border:1px dashed rgba(255,255,255,.14)
+    }
+    .col{display:flex;flex-direction:column;gap:10px}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .node{
+      min-width:210px; max-width:360px;
+      padding:12px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+    }
+    .node b{display:block;margin-bottom:6px;font-size:13px}
+    .node small{display:block;color:rgba(255,255,255,.76);line-height:1.35}
+    .node .mini{margin-top:8px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.72)}
+    .arrow{
+      font-size:18px;color:rgba(255,255,255,.7);padding:0 4px;user-select:none
+    }
+    .pill{
+      display:inline-block;margin-top:8px;
+      font-size:11px;padding:4px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8)
+    }
+    .blue{box-shadow:0 0 0 1px rgba(47,116,255,.25) inset}
+    .cyan{box-shadow:0 0 0 1px rgba(20,184,255,.25) inset}
+    .green{box-shadow:0 0 0 1px rgba(34,197,94,.25) inset}
+    .amber{box-shadow:0 0 0 1px rgba(245,158,11,.25) inset}
+    .pink{box-shadow:0 0 0 1px rgba(236,72,153,.25) inset}
+    .purple{box-shadow:0 0 0 1px rgba(168,85,247,.25) inset}
+    .gray{box-shadow:0 0 0 1px rgba(148,163,184,.25) inset}
+    .red{box-shadow:0 0 0 1px rgba(239,68,68,.25) inset}
+
+    details{margin-top:10px}
+    summary{cursor:pointer;color:rgba(255,255,255,.82);font-size:13px}
+    ul{margin:8px 0 0 18px;color:rgba(255,255,255,.76);line-height:1.45}
+    code{font-family:var(--mono);font-size:11px}
+    footer{color:var(--muted);font-size:12px;margin-top:18px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ISAGO – Flowcharts by video chapter</h1>
+    <p>Designed so a reader understands the flow on first read. Each section matches the chapter list shown in the deck (Introduction → Conclusion).</p>
+
+    <div class="legend">
+      <div class="tag"><span class="dot blue"></span>Airlines / Pool Airlines</div>
+      <div class="tag"><span class="dot green"></span>GHSP / Ground Service Provider</div>
+      <div class="tag"><span class="dot amber"></span>IATA / Program admin</div>
+      <div class="tag"><span class="dot purple"></span>Auditors / Audit Org (GOA/AO)</div>
+      <div class="tag"><span class="dot cyan"></span>Standards / Manuals</div>
+      <div class="tag"><span class="dot gray"></span>Outputs (Registry, Reports, Certificates)</div>
+      <div class="tag"><span class="dot red"></span>Deadlines / Compliance gates</div>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- 1) INTRODUCTION -->
+    <section>
+      <h2>1) Introduction — “What is ISAGO & why does it exist?”</h2>
+      <p class="sub">Problem → consequences → why a global audit + sharing model matters.</p>
+
+      <div class="flow">
+        <div class="node green">
+          <b>Ground operations reality</b>
+          <small>Many handlers, many airports, many airline requirements → variation + risk.</small>
+          <span class="pill green">Operational context</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node red">
+          <b>Risks & outcomes</b>
+          <small>Ground hazards affecting flight safety, aircraft damage, personnel injuries, security threats, delays & costs.</small>
+          <span class="pill red">Why it matters</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node amber">
+          <b>Oversight gap</b>
+          <small>Minimal direct oversight over GSP selection/licensing, training, auditing, reporting.</small>
+          <div class="mini">Regulators often hold airlines responsible for GSP oversight</div>
+          <span class="pill amber">Why airlines struggle</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Current situation (before ISAGO)</b>
+          <small>Redundant audits: multiple airlines audit the same GSP, in different ways → inconsistent results.</small>
+          <span class="pill gray">Inefficient & noisy</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node cyan">
+          <b>ISAGO idea</b>
+          <small>One standardized audit system + recognized standards + trained auditors + audit sharing.</small>
+          <span class="pill cyan">Single baseline</span>
+        </div>
+      </div>
+
+      <details>
+        <summary>Reader takeaway</summary>
+        <ul>
+          <li>ISAGO exists to reduce operational risk and reduce redundant audits through a shared, standard system.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- 2) ISAGO MODEL -->
+    <section>
+      <h2>2) ISAGO Model — “Two-level audits → Registration + Station Accreditation”</h2>
+      <p class="sub">This is the heart of ISAGO: Headquarters/Corporate + Station audit(s).</p>
+
+      <div class="flow">
+        <div class="col">
+          <div class="node green">
+            <b>GHSP decides to pursue ISAGO</b>
+            <small>Defines scope of services + stations to be covered.</small>
+            <span class="pill green">Applicant</span>
+          </div>
+
+          <div class="node cyan">
+            <b>Audit scope (disciplines)</b>
+            <small>Always ORM + operational disciplines (typical): LOD, PAB, HDL, AGM, CGM.</small>
+            <div class="mini"><code>ORM + {LOD,PAB,HDL,AGM,CGM}</code></div>
+          </div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="col">
+          <div class="node purple">
+            <b>Headquarters / Corporate Audit (MHQ)</b>
+            <small>Checks corporate policies, processes & procedures (network-wide control).</small>
+            <div class="mini">Usually first step for initial registration</div>
+            <span class="pill purple">Audit type: MHQ</span>
+          </div>
+
+          <div class="node purple">
+            <b>Station Audit (STN)</b>
+            <small>Checks local implementation at a specific station (how work is really done on the ground).</small>
+            <span class="pill purple">Audit type: STN</span>
+          </div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Registration + Station Accreditation</b>
+          <small>After: (1) MHQ + (2) at least one STN closed and approved → GHSP appears on ISAGO Registry; station(s) accredited.</small>
+          <span class="pill gray">Outcome</span>
+        </div>
+      </div>
+
+      <details>
+        <summary>Important “modern program” details (keeps you accurate today)</summary>
+        <ul>
+          <li><b>Combined Audit (CTN)</b> may be used in specific cases (HQ near station; limited station network).</li>
+          <li>Initial station accreditation audit must happen within a defined window after the initial HQ audit (program-controlled timelines).</li>
+          <li>Registration/Accreditation validity is on a fixed cycle (renewal required before expiry).</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- 3) DOCUMENTATION SYSTEM -->
+    <section>
+      <h2>3) ISAGO Documentation System — “Standards → Checklists → Reports”</h2>
+      <p class="sub">What auditors use, what GHSPs map to, and what gets produced.</p>
+
+      <div class="flow">
+        <div class="node cyan">
+          <b>Standards layer</b>
+          <small>GOSARPs (requirements) organized inside the ISAGO standards structure (ORM + operational disciplines).</small>
+          <span class="pill cyan">“What good looks like”</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node cyan">
+          <b>Program rules layer</b>
+          <small>Program Manual defines audit types, timelines, closure rules, approvals, renewals.</small>
+          <span class="pill cyan">“How ISAGO is run”</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node purple">
+          <b>Audit execution layer</b>
+          <small>Audit software/checklists + documentation assessment + implementation assessment → findings recorded.</small>
+          <span class="pill purple">“How audits happen”</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Outputs</b>
+          <small>Audit Report + Findings + closure evidence → IATA quality review/approval → Registry listing & report sharing protocol.</small>
+          <span class="pill gray">“What everyone consumes”</span>
+        </div>
+      </div>
+
+      <details>
+        <summary>How the audit starts (DA → IA) in practical terms</summary>
+        <ul>
+          <li><b>DA (Documentation Assessment):</b> auditor validates the GHSP’s gap analysis + controlled documentation before onsite implementation checks.</li>
+          <li><b>IA (Implementation Assessment):</b> onsite/operational verification: interviews, observation, sampling, records, compliance evidence.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- 4) IOSA & ISAGO -->
+    <section>
+      <h2>4) IOSA & ISAGO — “How they relate (and how they don’t)”</h2>
+      <p class="sub">IOSA = airline operations; ISAGO = ground operations providers & ground functions.</p>
+
+      <div class="flow">
+        <div class="node blue">
+          <b>IOSA</b>
+          <small>Airline operational safety audit program (airline-centric scope).</small>
+          <span class="pill blue">Airline ops</span>
+        </div>
+
+        <div class="arrow">↔</div>
+
+        <div class="node green">
+          <b>ISAGO</b>
+          <small>Ground operations audit program (GHSP/airline-as-handler) with detailed ground disciplines.</small>
+          <span class="pill green">Ground ops</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node cyan">
+          <b>Key idea</b>
+          <small>ISAGO goes deeper operationally on ground functions than IOSA’s ground sections because it’s purpose-built for ground operations.</small>
+          <span class="pill cyan">Depth on ground</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5) BENEFITS -->
+    <section>
+      <h2>5) ISAGO Benefits — “Who benefits and how”</h2>
+      <p class="sub">Same program, different value per stakeholder.</p>
+
+      <div class="flow">
+        <div class="node blue">
+          <b>For Airlines</b>
+          <small>Fewer redundant audits + standardized visibility into handler safety + access to shared reports (protocol-based).</small>
+          <span class="pill blue">Efficiency + oversight</span>
+        </div>
+
+        <div class="arrow">+</div>
+
+        <div class="node green">
+          <b>For GHSPs</b>
+          <small>One benchmark system; clearer expectations; reduced audit chaos; improved safety management + credibility.</small>
+          <span class="pill green">Benchmark + trust</span>
+        </div>
+
+        <div class="arrow">+</div>
+
+        <div class="node amber">
+          <b>For Regulators / Airports</b>
+          <small>Uniform standards across handlers; can complement oversight; could support airport concession/approval decisions.</small>
+          <span class="pill amber">Uniformity</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6) AUDIT POOL -->
+    <section>
+      <h2>6) ISAGO Audit Pool — “The sharing engine”</h2>
+      <p class="sub">Pool airlines do station audits + get unconditional report access (per the model described in the deck).</p>
+
+      <div class="flow">
+        <div class="node amber">
+          <b>IATA (Program Admin)</b>
+          <small>Manages/administrates the pool + allocates audits + enforces report handling protocols.</small>
+          <span class="pill amber">Allocation & governance</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node blue">
+          <b>Pool Airlines</b>
+          <small>Commit to perform an allocated number of station audits each year.</small>
+          <div class="mini">Also: unconditional access to shared audit reports</div>
+          <span class="pill blue">Contribute + consume</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node purple">
+          <b>Airline-nominated auditors</b>
+          <small>Experienced auditors nominated by pool airlines; trained to conduct ISAGO station audits.</small>
+          <span class="pill purple">Qualified people</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node green">
+          <b>GHSP stations audited (STN)</b>
+          <small>Station-level verification of implementation; findings captured and closed.</small>
+          <span class="pill green">Operational reality</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Audit Reports shared securely</b>
+          <small>IATA provides controlled access to reports and keeps them in a secure environment (per agreed protocol).</small>
+          <span class="pill gray">Trust & reuse</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7) TRAINING -->
+    <section>
+      <h2>7) ISAGO Training — “Make auditors consistent”</h2>
+      <p class="sub">Training exists so different auditors still produce comparable results.</p>
+
+      <div class="flow">
+        <div class="node purple">
+          <b>Auditor eligibility</b>
+          <small>Auditors must be experienced + trained/qualified for ISAGO (pool airline auditors for station audits in the deck model).</small>
+          <span class="pill purple">Consistency gate</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node amber">
+          <b>Training content focus</b>
+          <small>Audit technique + standards interpretation + reporting + sharing/admin rules.</small>
+          <span class="pill amber">Same language</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Outcome</b>
+          <small>Comparable audit reports across regions → report sharing becomes meaningful and usable.</small>
+          <span class="pill gray">Comparable outputs</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8) PROGRAM STATUS -->
+    <section>
+      <h2>8) Program Status — “Scale & tracking”</h2>
+      <p class="sub">Shows that ISAGO is designed to operate as a global program, not a one-off audit.</p>
+
+      <div class="flow">
+        <div class="node amber">
+          <b>Annual planning</b>
+          <small>Audit application → allocation → scheduling → delivery → approvals → registry updates.</small>
+          <span class="pill amber">Program rhythm</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Registry</b>
+          <small>Public/industry reference point for who is registered + which stations are accredited.</small>
+          <span class="pill gray">Single source</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9) COSTS -->
+    <section>
+      <h2>9) ISAGO Costs — “Who pays for what” (as described in the deck)</h2>
+      <p class="sub">Costs are split by audit type and who performs it.</p>
+
+      <div class="flow">
+        <div class="row">
+          <div class="node green">
+            <b>Corporate / HQ audit cost</b>
+            <small>Conducted by independent audit organizations (AOs/GOAs); GHSP covers HQ audit cost + travel/accom (deck example shows a 2-year cycle).</small>
+            <span class="pill green">Paid by GHSP</span>
+          </div>
+
+          <div class="arrow">+</div>
+
+          <div class="node blue">
+            <b>Station audit cost</b>
+            <small>Station audits conducted by auditing airlines in the pool; auditing airlines cover their own travel/accom costs inherent to station audits (deck model).</small>
+            <span class="pill blue">Paid by auditing airline</span>
+          </div>
+
+          <div class="arrow">→</div>
+
+          <div class="node gray">
+            <b>Net effect</b>
+            <small>Creates an incentive structure: GHSP invests in corporate control; airlines invest in oversight at stations; everyone reuses shared reports.</small>
+            <span class="pill gray">Shared efficiency</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10) INSURANCE PROGRAM -->
+    <section>
+      <h2>10) ISAGO Insurance Program — “Risk language for insurance markets”</h2>
+      <p class="sub">The deck links ISAGO with better risk selection/packaging (insurance view of operations quality).</p>
+
+      <div class="flow">
+        <div class="node purple">
+          <b>Operational risk becomes measurable</b>
+          <small>Standard audit outputs + consistent evidence across providers → clearer risk picture.</small>
+          <span class="pill purple">Quantifiable</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node amber">
+          <b>Insurance logic (from the deck)</b>
+          <small>“Selectively bundle” risks → increases competition and certainty of capacity.</small>
+          <span class="pill amber">Market effect</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Result (practical)</b>
+          <small>Better underwriting conversations: who has controls, evidence, and a verified safety management baseline.</small>
+          <span class="pill gray">Better decisions</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11) IGOM -->
+    <section>
+      <h2>11) IGOM — “Standardizing airline ground manuals”</h2>
+      <p class="sub">IGOM is a separate but related standardization push: reduce variations across airline GOMs.</p>
+
+      <div class="flow">
+        <div class="node blue">
+          <b>Today (problem)</b>
+          <small>Each airline publishes its own Ground Operations Manual (GOM) → for same aircraft type, variations can be big.</small>
+          <span class="pill blue">Variation</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node red">
+          <b>Impact</b>
+          <small>Variations → increased safety risk, aircraft damage risk, inefficiency for handlers.</small>
+          <span class="pill red">Operational friction</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node cyan">
+          <b>IGOM concept</b>
+          <small>Standardized IATA Ground Operations Manual that airlines can adopt as a “core” requirement set.</small>
+          <span class="pill cyan">Common baseline</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12) HOW TO SCHEDULE -->
+    <section>
+      <h2>12) How to schedule an ISAGO Audit — “Then vs Now”</h2>
+      <p class="sub">The deck shows the older “download + email form” method; today scheduling is handled through IATA ONE Source.</p>
+
+      <div class="flow">
+        <div class="col">
+          <div class="node gray">
+            <b>Method A (as shown in the deck / older flow)</b>
+            <small>1) Download standards<br/>2) Train managers on ORM<br/>3) Train ops on disciplines<br/>4) Fill audit request form<br/>5) Email IATA address</small>
+            <span class="pill gray">Legacy flow</span>
+          </div>
+        </div>
+
+        <div class="arrow">↔</div>
+
+        <div class="col">
+          <div class="node amber">
+            <b>Method B (current ONE Source flow)</b>
+            <small>ONE Source → “Schedule Audits” → select station → choose certification program → choose scopes → fill audit contact form → submit request.</small>
+            <span class="pill amber">Current flow</span>
+          </div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node red">
+          <b>Program scheduling timelines (IATA)</b>
+          <small>Audit applications are processed/allocated/scheduled on an annual cycle with defined cutoffs and confirmations.</small>
+          <span class="pill red">Time gates</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13) CONCLUSION -->
+    <section>
+      <h2>13) Conclusion — “Two fundamental aims”</h2>
+      <p class="sub">The “why” restated in one box.</p>
+
+      <div class="flow">
+        <div class="node cyan">
+          <b>ISAGO aims</b>
+          <small>1) Improve operational safety<br/>2) Drive down redundant audits<br/>Modelled on an IOSA-like structure → global benchmark for ground operations.</small>
+          <span class="pill cyan">Bottom line</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADD-ON: MODERN PROGRAM LIFECYCLE (MOST IMPORTANT FOR REAL WORK) -->
+    <section>
+      <h2>Bonus (Modern ISAGO lifecycle) — “The exact gates that make/keep registration valid”</h2>
+      <p class="sub">If you’re implementing digitally (Tulip/workflows), this is the lifecycle to map into your app logic.</p>
+
+      <div class="flow">
+        <div class="node green">
+          <b>Apply + define scope</b>
+          <small>HQ (MHQ) + station(s) (STN), or eligible Combined (CTN).</small>
+          <span class="pill green">Start</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node purple">
+          <b>Audit(s) executed</b>
+          <small>DA (documentation assessment) + IA (implementation) → findings.</small>
+          <span class="pill purple">Evidence</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node red">
+          <b>Close findings within required windows</b>
+          <small>Initial registration is cancelled if key audits aren’t closed/approved within the program timeline windows.</small>
+          <span class="pill red">Hard gate</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node amber">
+          <b>IATA quality review + approval</b>
+          <small>Reports undergo IATA QC/review before the registry status is granted/renewed.</small>
+          <span class="pill amber">Approval gate</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node gray">
+          <b>Registry listing + validity cycle</b>
+          <small>HQ registration + station accreditation appear on the registry and run on a 24-month validity cycle → renewal audits required before expiry.</small>
+          <span class="pill gray">Maintain</span>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="node purple">
+          <b>Verification audit (if triggered)</b>
+          <small>IATA can direct additional verification audits during the registration period to verify specific nonconformities.</small>
+          <span class="pill purple">Exception flow</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Tip: If you want, tell me the exact title of the YouTube video (shown on YouTube page). I can align the headings to the *exact* timestamps/chapters you see.
+    </footer>
+
+  </div>
+</body>
+</html>
